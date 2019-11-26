@@ -2,10 +2,11 @@ install.packages("factoextra")
 library(factoextra)
 library(ggplot2)
 library(readxl)
+library(gridExtra)
 
 #Load Raw Data
 setwd("..")
-setwd("Analisis Proyecto 2/")
+setwd("Clustering/")
 ListadoPromedios <- read_excel("ListadoPromedios.xlsx")
 Pensum11001 <- read_excel("Pensum11001.xls")
 Pensum13001 <- read_excel("Pensum13001.xls")
@@ -32,7 +33,6 @@ for (file in file_list){
     gradesDataset<-rbind(gradesDataset, temp_dataset)
     rm(temp_dataset)
   }
-  
 }
 
 
@@ -42,5 +42,5 @@ grid.arrange(rawdata)
 df<- scale(gradesDataset)
 head(df)
 
-
-
+set.seed(123)
+cluster4 <- kmeans(df, 3, nstart = 25)
