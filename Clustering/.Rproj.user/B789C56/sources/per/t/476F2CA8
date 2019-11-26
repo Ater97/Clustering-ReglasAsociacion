@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574808837910.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "476F2CA8",
+    "lastKnownWriteTime" : 1574742497,
+    "last_content_update" : 1574808837910,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "9C96500F",
+        "caption" : "gradesDataset",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=gradesDataset&cache_key=9C96500F",
+        "displayedObservations" : 6342,
+        "environment" : "",
+        "expression" : "gradesDataset",
+        "object" : "gradesDataset",
+        "preview" : 0,
+        "totalObservations" : 6342,
+        "variables" : 19
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
