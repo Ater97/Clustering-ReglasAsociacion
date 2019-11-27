@@ -19,7 +19,7 @@ ListadoPromediosNumeric <- read_excel("ListadoPromedios.xlsx",
                                              "skip", "skip", "numeric", "numeric", 
                                              "numeric", "numeric", "numeric", 
                                              "numeric"))
-View(ListadoPromediosNumeric)
+#View(ListadoPromediosNumeric)
 
 
 #Promedio_Simple_Acumulado VS cursos_acumulados
@@ -50,6 +50,22 @@ grafica4 <- fviz_cluster(cluster6, geom = "point", data = mainDataframe,show.clu
 grafica5 <- fviz_cluster(cluster7, geom = "point", data = mainDataframe,show.clust.cent = TRUE, ellipse = TRUE)
 pdf("Promedio_Simple_AcumuladoVScursos_acumulados.pdf") 
 grid.arrange(rawdata, grafica1, grafica2, grafica3, grafica4,grafica5)
+
+
+rng<-2:10 #K from 2 to 20
+tries <-100 #Run the K Means algorithm 100 times
+avg.totw.ss <-integer(length(rng)) #Set up an empty vector to hold all of points
+for(v in rng){ # For each value of the range variable
+  v.totw.ss <-integer(tries) #Set up an empty vector to hold the 100 tries
+  for(i in 1:tries){
+    k.temp <-kmeans(df,centers=v) #Run kmeans
+    v.totw.ss[i] <-k.temp$tot.withinss#Store the total withinss
+  }
+  avg.totw.ss[v-1] <-mean(v.totw.ss) #Average the 100 total withinss
+}
+TotalWithin <- plot(rng,avg.totw.ss,type="b", main="Total Within SS by Various K",
+                    ylab="Average Total Within Sum of Squares",
+                    xlab="Value of K")
 dev.off()
 
 ###################################################################################################################
@@ -83,6 +99,22 @@ grafica4 <- fviz_cluster(cluster6, geom = "point", data = mainDataframe,show.clu
 grafica5 <- fviz_cluster(cluster7, geom = "point", data = mainDataframe,show.clust.cent = TRUE, ellipse = TRUE)
 pdf("Promedio_Simple_AcumuladoVSaño.pdf") 
 grid.arrange(rawdata, grafica1, grafica2, grafica3, grafica4,grafica5)
+
+
+rng<-2:10 #K from 2 to 20
+tries <-100 #Run the K Means algorithm 100 times
+avg.totw.ss <-integer(length(rng)) #Set up an empty vector to hold all of points
+for(v in rng){ # For each value of the range variable
+  v.totw.ss <-integer(tries) #Set up an empty vector to hold the 100 tries
+  for(i in 1:tries){
+    k.temp <-kmeans(df,centers=v) #Run kmeans
+    v.totw.ss[i] <-k.temp$tot.withinss#Store the total withinss
+  }
+  avg.totw.ss[v-1] <-mean(v.totw.ss) #Average the 100 total withinss
+}
+TotalWithin <- plot(rng,avg.totw.ss,type="b", main="Total Within SS by Various K",
+                    ylab="Average Total Within Sum of Squares",
+                    xlab="Value of K")
 dev.off()
 
 ##################################################################################################################
@@ -114,6 +146,22 @@ grafica4 <- fviz_cluster(cluster6, geom = "point", data = mainDataframe,show.clu
 grafica5 <- fviz_cluster(cluster7, geom = "point", data = mainDataframe,show.clust.cent = TRUE, ellipse = TRUE)
 pdf("Promedio_Simple_AcumuladoVScursos_x_ciclo.pdf") 
 grid.arrange(rawdata, grafica1, grafica2, grafica3, grafica4,grafica5)
+
+
+rng<-2:10 #K from 2 to 20
+tries <-100 #Run the K Means algorithm 100 times
+avg.totw.ss <-integer(length(rng)) #Set up an empty vector to hold all of points
+for(v in rng){ # For each value of the range variable
+  v.totw.ss <-integer(tries) #Set up an empty vector to hold the 100 tries
+  for(i in 1:tries){
+    k.temp <-kmeans(df,centers=v) #Run kmeans
+    v.totw.ss[i] <-k.temp$tot.withinss#Store the total withinss
+  }
+  avg.totw.ss[v-1] <-mean(v.totw.ss) #Average the 100 total withinss
+}
+TotalWithin <- plot(rng,avg.totw.ss,type="b", main="Total Within SS by Various K",
+                    ylab="Average Total Within Sum of Squares",
+                    xlab="Value of K")
 dev.off()
 
 ##################################################################################################################
