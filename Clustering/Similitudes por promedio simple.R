@@ -4,15 +4,6 @@ library(ggplot2)
 library(readxl)
 library(gridExtra)
 
-#Load Raw Data
-setwd("..")
-setwd("Clustering/")
-ListadoPromedios <- read_excel("ListadoPromedios.xlsx")
-Pensum11001 <- read_excel("Pensum11001.xls")
-Pensum13001 <- read_excel("Pensum13001.xls")
-Pensum18001 <- read_excel("Pensum18001.xls")
-
-
 # Listado de primedios unicamente con valores numericos
 ListadoPromediosNumeric <- read_excel("ListadoPromedios.xlsx", 
                                col_types = c("numeric", "numeric", "skip", 
