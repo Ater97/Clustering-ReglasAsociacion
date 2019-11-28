@@ -1,4 +1,4 @@
-#install.packages("factoextra")
+install.packages("factoextra")
 library(factoextra)
 library(ggplot2)
 library(readxl)

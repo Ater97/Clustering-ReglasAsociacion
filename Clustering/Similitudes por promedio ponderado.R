@@ -20,7 +20,7 @@ ListadoPromediosNumeric <- read_excel("ListadoPromedios.xlsx",
 mainDataframe <-  read_excel("ListadoPromedios.xlsx", 
                              col_types = c("skip", "skip", "skip", 
                                            "skip", "skip", "skip", "skip", "skip", 
-                                           "numeric", "skip", "numeric"))
+                                           "skip", "numeric", "numeric"))
 
 rawdata<-ggplot(mainDataframe, aes(x = Promedio_Ponderado_Acumulado, y = cursos_acumulados)) + geom_point()
 grid.arrange(rawdata)
