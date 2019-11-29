@@ -67,7 +67,7 @@ dev.off()
 mainDataframe <- read_excel("ListadoPromedios.xlsx", 
                             col_types = c("numeric", "skip", "skip", 
                                           "skip", "skip", "skip", "skip", "skip", 
-                                          "numeric", "skip", "skip"))
+                                          "skip", "numeric", "skip"))
 mainDataframe<-mainDataframe[!mainDataframe$año == "0", ]
 mainDataframe<-mainDataframe[!mainDataframe$año == "5", ]
 
@@ -116,7 +116,7 @@ dev.off()
 mainDataframe <- read_excel("ListadoPromedios.xlsx", 
                             col_types = c("skip", "skip", "skip", 
                                           "skip", "skip", "skip", "skip", "numeric", 
-                                          "numeric", "skip", "skip"))
+                                          "skip", "numeric", "skip"))
 
 rawdata<-ggplot(mainDataframe, aes(x = cursos_x_ciclo , y =  Promedio_Ponderado_Acumulado)) + geom_point()
 grid.arrange(rawdata)

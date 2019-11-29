@@ -115,7 +115,7 @@ grafica2 <- fviz_cluster(cluster4, geom = "point", data = mainDataframe,show.clu
 grafica3 <- fviz_cluster(cluster5, geom = "point", data = mainDataframe,show.clust.cent = TRUE, ellipse = TRUE)
 grafica4 <- fviz_cluster(cluster6, geom = "point", data = mainDataframe,show.clust.cent = TRUE, ellipse = TRUE)
 grafica5 <- fviz_cluster(cluster7, geom = "point", data = mainDataframe,show.clust.cent = TRUE, ellipse = TRUE)
-pdf("Promedio_Simple_AcumuladoVScursos_acumulados.pdf") 
+
 grid.arrange(rawdata, grafica1, grafica2, grafica3, grafica4,grafica5)
 
 

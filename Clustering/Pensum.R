@@ -78,53 +78,24 @@ NombresEje <- function(df){
 loadData()
 names(gradesDataset)[names(gradesDataset) == "No_pensum"] <- "No_Pensum"
 
+Pensum$No_Curso <- strtoi(Pensum$No_Curso, base= 0L)
 
-PromediosEstudiantes <- merge(x = ListadoPromedios, y = gradesDataset, by = "ID", all = TRUE, stringsAsFactors=TRUE)
-df<-subset(PromediosEstudiantes, select=-c(ID,sede, año, facultad, carrera, No_seccion_fac))
+PensumNotas <- merge(x = Pensum, y = gradesDataset, by = "No_Curso", all.x = TRUE)
 
-
-
-gradesPensum <- merge(x = gradesDataset, y = Pensum, by = "No_Pensum", all.x = TRUE)
+PensumNotas[complete.cases(PensumNotas), ]
 
 
-rm(gradesPensum)
 
-#### Promedio_Simple_Acumulado por ID ####################
-
-df <-data.frame(PromediosEstudiantes$ID, PromediosEstudiantes$Promedio_Simple_Acumulado)
-names(df)[names(df) == "PromediosEstudiantes.ID"] <- "ID"
-names(df)[names(df) == "PromediosEstudiantes.Promedio_Simple_Acumulado"] <- "Promedio_Simple_Acumulado"
-            #value, column
-with(df, by(Promedio_Simple_Acumulado, ID, mean))
-
-
-#### Ejes ID Promedio ####################
-PromediosEstudiantesEjes <-NombresEje(PromediosEstudiantes)
-rm(PromediosEstudiantes)
-rm(Pensum11001)
-rm(Pensum13001)
-rm(Pensum18001)
-
-
-df <-data.frame(#PromediosEstudiantesEjes$Eje, 
-                PromediosEstudiantesEjes$Promedio_Simple_Acumulado, 
-               # PromediosEstudiantesEjes$Creditos, 
-                PromediosEstudiantesEjes$No_Pensum)
-names(df)[names(df) == "PromediosEstudiantesEjes.Creditos"] <- "Creditos"
-names(df)[names(df) == "PromediosEstudiantesEjes.Eje"] <- "Eje"
-names(df)[names(df) == "PromediosEstudiantesEjes.Promedio_Simple_Acumulado"] <- "Promedio_Simple_Acumulado"
-names(df)[names(df) == "PromediosEstudiantesEjes.No_Pensum"] <- "No_Pensum"
-
-df[complete.cases(df), ]
-
-df <- data.frame(lapply(df, as.numeric))
+dt1 <- data.frame(Pensum$No_Curso, Pensum$No_Pensum)
+dt2 <- data.frame(gradesDataset$No_Curso, gradesDataset$Nota)
 ### Creditos Practicos vs Teoricos de todos los pensums ######
 
-df <-data.frame(Pensum$Cred_Teo, Pensum$Cred_Pra)
-names(df)[names(df) == "Pensum.Cred_Teo"] <- "Cred_Teo"
-names(df)[names(df) == "Pensum.Cred_Pra"] <- "Cred_Pra"
+df <-data.frame(gradesDataset$No_Pensum, gradesDataset$Nota)
+names(df)[names(df) == "gradesDataset.No_Pensum"] <- "No_Pensum"
+names(df)[names(df) == "gradesDataset.Nota"] <- "Nota"
+df$Nota <- strtoi(df$Nota, base= 0L)
 
-rawdata<-ggplot(df, aes(x = Cred_Teo, y = Cred_Pra)) + geom_point()
+rawdata<-ggplot(df, aes(x = Nota, y = No_Pensum)) + geom_point()
 grid.arrange(rawdata)
 
 df<- scale(df)
@@ -164,18 +135,9 @@ TotalWithin <- plot(rng,avg.totw.ss,type="b", main="Total Within SS by Various K
 #dev.off()
 
 
-#### Gower #########
-df<-gradesDataset[ , c("No_curso","Creditos","No_ciclo","No_pensum","No_jornada","No_tip_examen")]
+df <- data.frame(lapply(Pensum, as.numeric))
 
-pdf("Notas gower.pdf") 
-
-
-df<-gradesDataset[ , c("No_curso","Creditos","No_ciclo","No_pensum","No_jornada","No_tip_examen")]
-
-df <- data.frame(lapply(df, as.numeric))
-
-
-
+#“euclidean”, “manhattan”, “gower”
 gower_dist <- daisy(df, metric = "euclidean")
 gower_mat <- as.matrix(gower_dist)
 df[which(gower_mat == min(gower_mat[gower_mat != min(gower_mat)]), arr.ind = TRUE)[1, ], ]
@@ -209,55 +171,3 @@ tsne_data <- tsne_obj$Y %>%
 
 ggplot(aes(x = X, y = Y), data = tsne_data) +
   geom_point(aes(color = cluster))
-
-dev.off()
-
-
-
-
-
-
-######## ListadoPromedios gower ###################################################################################
-
-df <- read_excel("ListadoPromedios.xlsx", 
-                 col_types = c("skip", "skip", "skip", 
-                               "skip", "skip", "numeric", "numeric", 
-                               "skip", "numeric", "numeric", "numeric"))
-
-pdf("ListadoPromedios euclidean.pdf") 
-#“euclidean”, “manhattan”, “gower”
-gower_dist <- daisy(df, metric = "euclidean")
-gower_mat <- as.matrix(gower_dist)
-df[which(gower_mat == min(gower_mat[gower_mat != min(gower_mat)]), arr.ind = TRUE)[1, ], ]
-df[which(gower_mat == max(gower_mat[gower_mat != max(gower_mat)]), arr.ind = TRUE)[1, ], ]
-
-sil_width <- c(NA)
-for(i in 2:8){  
-  pam_fit <- pam(gower_dist, diss = TRUE, k = i)  
-  sil_width[i] <- pam_fit$silinfo$avg.width  
-}
-plot(1:8, sil_width,
-      xlab = "Number of clusters",
-      ylab = "Silhouette Width")
-lines(1:8, sil_width)
-
-k <- 4
-pam_fit <- pam(gower_dist, diss = TRUE, k)
-pam_results <- df %>%
-  mutate(cluster = pam_fit$clustering) %>%
-  group_by(cluster) %>%
-  do(the_summary = summary(.))
-pam_results$the_summary
-
-
-tsne_obj <- Rtsne(gower_dist, is_distance = TRUE)
-
-tsne_data <- tsne_obj$Y %>%
-  data.frame() %>%
-  setNames(c("X", "Y")) %>%
-  mutate(cluster = factor(pam_fit$clustering))
-
-ggplot(aes(x = X, y = Y), data = tsne_data) +
-  geom_point(aes(color = cluster))
-
-dev.off()
