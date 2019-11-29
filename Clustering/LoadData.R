@@ -2,6 +2,10 @@ install.packages("factoextra")
 install.packages("tidyverse")
 install.packages("scales")
 install.packages("rlang")
+install.packages('arulesViz')
+install.packages('grid')
+library(arulesViz)
+install.packages('arules')
 
 library(factoextra)
 library(ggplot2)
@@ -26,31 +30,62 @@ View(Pensum18001)
 #Load and merge all grades
 setwd("Notas/")
 gradesDataset=data.frame()
-file_list <- list.files()0
+datosEstudiantes<- list()
+file_list <- list.files()
 for (file in file_list){
   #Quitarle a los nobres la extencion
   names<-tools::file_path_sans_ext(basename(file))
   #print(names[1])
   # if the merged gradesDataset doesn't exist, create it
-  if (!exists("gradesDataset")){
-    gradesDataset <- read.table(file, header=TRUE, sep=",")
-    gradesDataset$ID <- rep(names[1],nrow(gradesDataset))
+  #if (!exists("gradesDataset")){
+    #gradesDataset <- read.table(file, header=TRUE, sep=",")
+    #gradesDataset$ID <- rep(names[1],nrow(gradesDataset))
     
-  }
+  #}
   
   # if the merged gradesDataset does exist, append to it
   if (exists("gradesDataset")){
     temp_dataset=data.frame()
     temp_dataset <-read.table(file, header=TRUE, sep=",")
-    temp_dataset$ID <- rep(names[1],nrow(temp_dataset))
-    gradesDataset<-rbind(gradesDataset, temp_dataset)
+    temp_dataset<-temp_dataset[order(temp_dataset$No_ciclo),]
+    temp_dataset$Nota <- as.numeric(as.character(temp_dataset$Nota))
+    temp_dataset<-temp_dataset%>% filter(Nota < 65)
+    temp_dataset <- data.frame(temp_dataset$No_ciclo, temp_dataset$Nombre_Curso)
+    names(temp_dataset) <- c("No_ciclo", "Nombre_Curso" )
+    #datosEstudiantes[[names[1]]]<-temp_dataset
+    write.table(temp_dataset, './tmp/output.csv', sep = ',', row.names = FALSE, append = FALSE, fileEncoding = 'UTF-8')
+    order_trans <- read.transactions(
+      file = "./tmp/output.csv",
+      format = "single",
+      sep = ",",
+      header=TRUE,
+      cols=c(1,2),
+      rm.duplicates = TRUE
+    )
+    if(nrow(order_trans)>0){
+      rules <- apriori(order_trans, parameter=list(support=0.02, confidence=0.65,maxlen=5,maxtime=60))
+      rUnion <- union(rUnion,rules)
+      a<-as(rules,"data.frame")
+      datosEstudiantes[[names[1]]]<-a
+      gradesDataset<-rbind(gradesDataset, a)
+      
+    }
+    #nrow(dataset)
+    #inspect(rules)
+    #temp_dataset$ID <- rep(names[1],nrow(temp_dataset))
     rm(temp_dataset)
   }
 }
+
+top_20_itemsets <- sort(gradesDataset, by = "support", decreasing = TRUE)[1:20]
+nrow(dataset)
 dir.create(path = "tmp", showWarnings = FALSE)
 gradesDataset[order(gradesDataset$No_ciclo),]
 gradesDataset<-gradesDataset[filter(gradesDataset$Nota > 65),]
-gradesDataset%>% filter(gradesDataset.Nota > 65)
+gradesDataset <- as_tibble(gradesDataset)
+gradesDataset$Nota <- as.numeric(as.character(gradesDataset$Nota))
+gradesDataset <-gradesDataset%>% filter(Nota < 65)
+newgradesDataset<-gradesDataset%>% filter(Nota < 65)
 gradesDataset<-gradesDataset[order(gradesDataset$No_ciclo),]
 newgradesDataset<- data.frame()
 newgradesDataset <- data.frame(gradesDataset$No_ciclo, gradesDataset$Nombre_Curso)
@@ -74,7 +109,11 @@ order_trans@itemInfo
 inspect(order_trans)
 image(order_trans)
 
-
+my_data <- as_tibble(iris)
+my_data
+my_data %>% filter(Sepal.Length > 7)
+my_data <-my_data %>% filter(Sepal.Length > 7)
+write.table(my_data, './tmp/Prueba.csv', sep = ',', row.names = FALSE, append = FALSE, fileEncoding = 'UTF-8')
 datos_split <- split(x = gradesDataset$Nombre_Curso, f = gradesDataset$No_curso)
 datos_split<- gradesDataset %>% as.data.frame() %>% mutate(valor = 1) %>%spread(key = Nombre_Curso, value = valor, fill = 0) %>%
   column_to_rownames(var = "No_curso") %>%
@@ -95,11 +134,13 @@ cluster4 <- kmeans(df, 3, nstart = 25)
 #:eemos otro dataset
 data(Groceries)
 Groceries
-Groceries@itemInfo
-
+order_trans@itemInfo
+inspect(order_trans)
+order_trans
 #definimos reglas
-rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.5))
+rules <- apriori(order_trans, parameter=list(support=0.000000000000000001, confidence=0.65,maxlen=5,maxtime=60))
 inspect(rules)
+a<-as(rules,"data.frame")
 
 #extraemos reglas con confianza =0.8 o mas
 subrules <- rules[quality(rules)$confidence > 0.8]
