@@ -11,8 +11,8 @@ library(dplyr)
 setwd("..")
 setwd("Clustering/")
 ListadoPromedios <- read_excel("ListadoPromedios.xlsx")
-ListadoPromedios$cursos_numericos <- 0
-ListadoPromedios$promedio_cursos_numericos <- 0 
+ListadoPromedios$cursos_area <- 0
+ListadoPromedios$promedio_cursos_area <- 0 
 
 Pensum11001 <- read_excel("Pensum11001.xls")
 Pensum13001 <- read_excel("Pensum13001.xls")
@@ -41,10 +41,10 @@ for (file in file_list){
     temp_dataset$ID <- rep(names[1],nrow(temp_dataset))
     gradesDataset<-rbind(gradesDataset, temp_dataset)
     #grades<- gradesDataset[which(gradesDataset$Nota != 'A' & gradesDataset$Nota_Calculo_Prom != 'NA'),]
-    ListadoPromedios$cursos_numericos[which(ListadoPromedios$ID == rep(names[1]))] <- temp_dataset %>% filter(grepl("(CIENCIAS BASICAS)", Eje)) %>% summarise(cursos = n_distinct(No_curso)) 
+    ListadoPromedios$cursos_area[which(ListadoPromedios$ID == rep(names[1]))] <- temp_dataset %>% filter(grepl("(CIENCIAS DE INGENIERIA)", Eje) & Nota != 'A' & Nota != 'R') %>% summarise(cursos = n_distinct(No_curso)) 
     #temp_dataset$Nota <- as.numeric(temp_dataset$Nota)
     #test <- temp_dataset$Nota
-    ListadoPromedios$promedio_cursos_numericos[which(ListadoPromedios$ID == rep(names[1]))] <- temp_dataset %>% filter(grepl("(CIENCIAS BASICAS)", Eje ) & Nota != 'A') %>% summarise(promedio = mean(strtoi(Nota, base= 0L)))
+    ListadoPromedios$promedio_cursos_area[which(ListadoPromedios$ID == rep(names[1]))] <- temp_dataset %>% filter(grepl("(CIENCIAS DE INGENIERIA)", Eje ) & Nota != 'A' & Nota != 'R') %>% summarise(promedio = mean(strtoi(Nota, base= 0L)))
     #test <- temp_dataset %>% filter(grepl("(CIENCIAS BASICAS)", Eje )) %>% summarise(cursos = mean(Nota))
     #TEST <- temp_dataset %>% filter(grepl("(CIENCIAS BASICAS)", Eje)) %>% group_by(No_ciclo) %>% summarise(cursos = n_distinct(No_curso)) 
     #TEST
@@ -58,10 +58,10 @@ for (file in file_list){
 #grid.arrange(rawdata)
 
 #cursos <-gradesDataset[, c('Nota', 'Nota_Calculo_Prom')]
-ListadoPromedios <- subset(ListadoPromedios, cursos_numericos != 0 )
-ListadoPromedios$cursos_numericos <- unlist(ListadoPromedios$cursos_numericos)
-ListadoPromedios$promedio_cursos_numericos <- unlist(ListadoPromedios$promedio_cursos_numericos)
-cursos <- ListadoPromedios[, c('cursos_numericos', 'promedio_cursos_numericos')]
+ListadoPromedios <- subset(ListadoPromedios, cursos_area != 0 )
+ListadoPromedios$cursos_area <- unlist(ListadoPromedios$cursos_area)
+ListadoPromedios$promedio_cursos_area <- unlist(ListadoPromedios$promedio_cursos_area)
+cursos <- ListadoPromedios[, c('cursos_area', 'promedio_cursos_area')]
 
 
 df<- scale(cursos)
@@ -83,6 +83,6 @@ grafica6 <- fviz_cluster(clusterk6, geom = "point", data = df, show.clust.cent =
 grid.arrange(grafica2, grafica3, grafica4,  grafica5,  grafica6,grafica7,   nrow = 2)
 
 
-fviz_nbclust(df, kmeans, method = "wss") +
-  geom_vline(xintercept = 4, linetype = 2)
 
+fviz_nbclust(df, kmeans, method = "wss") +
+  geom_vline(xintercept = 3, linetype = 2)
