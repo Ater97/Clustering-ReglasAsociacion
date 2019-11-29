@@ -2,9 +2,7 @@ install.packages("factoextra")
 install.packages("tidyverse")
 install.packages("scales")
 install.packages("rlang")
-install.packages('arulesViz')
 install.packages('grid')
-library(arulesViz)
 install.packages('arules')
 
 library(factoextra)
@@ -26,11 +24,15 @@ View(Pensum11001)
 View(Pensum13001)
 View(Pensum18001)
 
-
+datos_split=data.frame()
 #Load and merge all grades
+myRules<-as(datos_split, Class = "rules")
+myRules=new("rules", ...)
+myRules<- apriori(myRules, parameter=list(support=0.02, confidence=0.65,maxlen=5,maxtime=60))
+myRules
 setwd("Notas/")
 gradesDataset=data.frame()
-datosEstudiantes<- list()
+ReglasCursoxCursosReprobados=data.frame()
 file_list <- list.files()
 for (file in file_list){
   #Quitarle a los nobres la extencion
@@ -47,6 +49,7 @@ for (file in file_list){
   if (exists("gradesDataset")){
     temp_dataset=data.frame()
     temp_dataset <-read.table(file, header=TRUE, sep=",")
+    gradesDataset<-rbind(gradesDataset, temp_dataset)
     temp_dataset<-temp_dataset[order(temp_dataset$No_ciclo),]
     temp_dataset$Nota <- as.numeric(as.character(temp_dataset$Nota))
     temp_dataset<-temp_dataset%>% filter(Nota < 65)
@@ -63,20 +66,30 @@ for (file in file_list){
       rm.duplicates = TRUE
     )
     if(nrow(order_trans)>0){
-      rules <- apriori(order_trans, parameter=list(support=0.02, confidence=0.65,maxlen=5,maxtime=60))
-      rUnion <- union(rUnion,rules)
-      a<-as(rules,"data.frame")
-      datosEstudiantes[[names[1]]]<-a
-      gradesDataset<-rbind(gradesDataset, a)
+      if (!exists("rules")){
+        rules <- apriori(order_trans, parameter=list(support=0.02, confidence=0.65,maxlen=5,maxtime=60))
+        a<-as(rules,"data.frame")
+      }
+      else{
+        myRules <- apriori(order_trans, parameter=list(support=0.02, confidence=0.65,maxlen=5,maxtime=60))
+        #rrules <- union(rules,myRules)
+        rUnion <- union(r1,r2)
+        #rules<-rrules
+        a<-as(myRules,"data.frame")
+      }
+      #a<-as(rules,"data.frame")
+      ReglasCursoxCursosReprobados<-rbind(ReglasCursoxCursosReprobados, a)
       
     }
     #nrow(dataset)
     #inspect(rules)
     #temp_dataset$ID <- rep(names[1],nrow(temp_dataset))
     rm(temp_dataset)
+    
   }
 }
-
+rm(myRules)
+rm(rules)
 top_20_itemsets <- sort(gradesDataset, by = "support", decreasing = TRUE)[1:20]
 nrow(dataset)
 dir.create(path = "tmp", showWarnings = FALSE)
