@@ -183,10 +183,10 @@ for(row in df){
 
 
 
-No_ciclo -> Nombre ciclo-> curso
-1 -> primer ciclo -> mate1
-1 -> primer ciclo -> cálculo1
-1 -> primer ciclo ->primer ciclo
+#No_ciclo -> Nombre ciclo-> curso
+#1 -> primer ciclo -> mate1
+#1 -> primer ciclo -> cálculo1
+#1 -> primer ciclo ->primer ciclo
 
 
 
