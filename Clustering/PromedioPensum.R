@@ -119,3 +119,74 @@ grafica5 <- fviz_cluster(cluster7, geom = "point", data = mainDataframe,show.clu
 grid.arrange(rawdata, grafica1, grafica2, grafica3, grafica4,grafica5)
 
 
+
+
+
+
+
+
+loadData <- function(){
+  #setwd("Clustering/")
+  ListadoPromedios <<- read_excel("ListadoPromedios.xlsx")
+  Pensum11001 <- read_excel("Pensum11001.xls")
+  Pensum13001 <- read_excel("Pensum13001.xls")
+  Pensum18001 <- read_excel("Pensum18001.xls")
+  Pensum <<- rbind(Pensum11001, Pensum13001, Pensum18001)
+  #Load and merge all grades
+  setwd("Notas/")
+  file_list <- list.files()
+  gradesDataset<<-data.frame()
+  for (file in file_list){
+    names<-tools::file_path_sans_ext(basename(file))
+    #print(names[1])
+    # if the merged gradesDataset doesn't exist, create it
+    if (!exists("gradesDataset")){
+      gradesDataset<<-read.table(file, header=TRUE, sep=",")
+      gradesDataset$ID<<-rep(names,nrow(gradesDataset))
+      
+    }
+    
+    # if the merged gradesDataset does exist, append to it
+    if (exists("gradesDataset")){
+      temp_dataset=data.frame()
+      temp_dataset <-read.table(file, header=TRUE, sep=",")
+      temp_dataset$ID <- rep(names,nrow(temp_dataset))
+      gradesDataset<<-rbind(gradesDataset, temp_dataset)
+      rm(temp_dataset)
+    }
+  }
+  
+  setwd("..")
+  rm(file_list)
+  rm(file)
+  rm(names)
+}
+loadData()
+df<- data.frame(gradesDataset$No_ciclo,gradesDataset$Nombre_Ciclo,gradesDataset$Nombre_Curso)
+names(df)[names(df) == "gradesDataset.No_ciclo"] <- "No_ciclo"
+names(df)[names(df) == "gradesDataset.Nombre_Ciclo"] <- "Nombre_Ciclo"
+names(df)[names(df) == "gradesDataset.Nombre_Curso"] <- "Nombre_Curso"
+
+
+maindf<-df
+maindf$No_ciclo<-0
+maindf$Nombre_Ciclo<-0
+maindf$Nombre_Curso<-0
+
+for(row in df){
+  maindf <- rbind(maindf, row)
+  
+  
+}
+
+
+
+
+
+No_ciclo -> Nombre ciclo-> curso
+1 -> primer ciclo -> mate1
+1 -> primer ciclo -> cálculo1
+1 -> primer ciclo ->primer ciclo
+
+
+

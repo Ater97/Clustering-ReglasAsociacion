@@ -170,7 +170,7 @@ df<-gradesDataset[ , c("No_curso","Creditos","No_ciclo","No_pensum","No_jornada"
 pdf("Notas gower.pdf") 
 
 
-df<-gradesDataset[ , c("No_curso","Creditos","No_ciclo","No_pensum","No_jornada","No_tip_examen")]
+df<-gradesDataset[ , c("Nota","Creditos","No_curso")]
 
 df <- data.frame(lapply(df, as.numeric))
 
@@ -217,16 +217,16 @@ dev.off()
 
 
 
-######## ListadoPromedios gower ###################################################################################
+######## ListadoPromedios manhattan ###################################################################################
 
 df <- read_excel("ListadoPromedios.xlsx", 
                  col_types = c("skip", "skip", "skip", 
                                "skip", "skip", "numeric", "numeric", 
                                "skip", "numeric", "numeric", "numeric"))
 
-pdf("ListadoPromedios euclidean.pdf") 
+pdf("ListadoPromedios manhattan.pdf") 
 #“euclidean”, “manhattan”, “gower”
-gower_dist <- daisy(df, metric = "euclidean")
+gower_dist <- daisy(df, metric = "manhattan")
 gower_mat <- as.matrix(gower_dist)
 df[which(gower_mat == min(gower_mat[gower_mat != min(gower_mat)]), arr.ind = TRUE)[1, ], ]
 df[which(gower_mat == max(gower_mat[gower_mat != max(gower_mat)]), arr.ind = TRUE)[1, ], ]
